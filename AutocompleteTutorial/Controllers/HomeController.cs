@@ -77,50 +77,49 @@ namespace AutocompleteTutorial.Controllers
         public ActionResult AutoComplete(string term)
         {
             InitSearch();
-            // Call autocomplete API and return results
-            //AutocompleteParameters sp = new AutocompleteParameters()
-            //{
-            //    AutocompleteMode = mode,
-            //    UseFuzzyMatching = fuzzy,
-            //    Top = top,
-            //    MinimumCoverage = 80
-            //};
-            //AutocompleteResult resp = _indexClient.Documents.Autocomplete(term, "sg", sp);
+            //Call autocomplete API and return results
+            AutocompleteParameters sp = new AutocompleteParameters()
+            {
+                AutocompleteMode = AutocompleteMode.OneTerm,
+                UseFuzzyMatching = false,
+                Top = 5,
+                MinimumCoverage = 80
+            };
+            AutocompleteResult resp = _indexClient.Documents.Autocomplete(term, "sg", sp);
 
-            //// Conver the Suggest results to a list that can be displayed in the client.
-            //List<string> autocomplete = resp.Results.Select(x => x.Text).Distinct().ToList();
-            //return new JsonResult
-            //{
-            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet,
-            //    Data = autocomplete
-            //};
-            return null;
+            // Conver the Suggest results to a list that can be displayed in the client.
+            List<string> autocomplete = resp.Results.Select(x => x.Text).Distinct().ToList();
+            return new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                Data = autocomplete
+            };
         }
 
         public ActionResult Both(string term)
         {
             InitSearch();
 
+            AutocompleteParameters sp1 = new AutocompleteParameters()
+            {
+                AutocompleteMode = AutocompleteMode.OneTerm,
+                UseFuzzyMatching = false,
+                Top = 5,
+                MinimumCoverage = 80
+            };
+            AutocompleteResult resp1 = _indexClient.Documents.Autocomplete(term, "sg", sp1);
+
             // Call both the suggest and autocomplete API and return results
-            SuggestParameters sp = new SuggestParameters()
+            SuggestParameters sp2 = new SuggestParameters()
             {
                 UseFuzzyMatching = false,
                 Top = 5
             };
-            DocumentSuggestResult resp1 = _indexClient.Documents.Suggest(term, "sg", sp);
+            DocumentSuggestResult resp2 = _indexClient.Documents.Suggest(term, "sg", sp2);
+       
+            //Convert the suggest query results to a list that can be displayed in the client.
             var result = resp1.Results.Select(x => x.Text).Distinct().ToList().Select(x => new { label = x, category = "Suggestions" }).ToList();
-
-            //AutocompleteParameters sp = new AutocompleteParameters()
-            //{
-            //    AutocompleteMode = mode,
-            //    UseFuzzyMatching = fuzzy,
-            //    Top = top,
-            //    MinimumCoverage = 80
-            //};
-            //AutocompleteResult resp2 = _indexClient.Documents.Autocomplete(term, "sg", sp);
-
-            // Convert the suggest query results to a list that can be displayed in the client.
-            //result.AddRange(resp1.Results.Select(x => x.Text).Distinct().ToList().Select(x => new { label = x, category = "Autocomplete" }).ToList());
+            result.AddRange(resp2.Results.Select(x => x.Text).Distinct().ToList().Select(x => new { label = x, category = "Autocomplete" }).ToList());
 
             return new JsonResult
             {

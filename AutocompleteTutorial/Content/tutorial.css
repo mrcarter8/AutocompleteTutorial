@@ -69,4 +69,34 @@
     font: 24px/normal 'Segoe UI Light',Arial,Helvetica,Sans-Serif;
 }
 
+/* for autocompleteInline plugin */
+.hide-autocomplete-dropdown .xdsoft_autocomplete_dropdown {
+    display: none !important;
+}
+
+.xdsoft_autocomplete_dropdown {
+    margin-left: -20px !important;
+    margin-top: 5px !important;
+    width: 648px !important;
+}
+
+.xdsoft_autocomplete_dropdown > div {
+    padding-left: 5px !important;
+}
+
+.xdsoft_autocomplete input {
+    margin: 3px 5px !important;
+}
+
+
+.xdsoft_autocomplete .xdsoft_autocomplete_hint {
+    position: absolute;
+    z-index: 1;
+    color: #ccc !important;
+    -webkit-text-fill-color: #ccc !important;
+    text-fill-color: #ccc !important;
+    overflow: hidden !important;
+    white-space: pre !important;
+    width: 500px !important;
+}
 

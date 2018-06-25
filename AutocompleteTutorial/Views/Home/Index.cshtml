@@ -1,6 +1,20 @@
-﻿
+﻿<div class="tutorialBody">
 
-<div class="tutorialBody">
+    <!-- Suggestions -->
+    <div class="example">
+        <h2 class="exampleTitle">Suggestions</h2>
+        <div class="exampleText">
+            Suggestions provide recommendations of actual results based on what the user has typed so far.  Typically, these are shown in a list below the search box and selecting an option navigates the user directly to what they are looking for instead of having to first go to a search results page and navigate from there.
+            You can use the <a href="https://docs.microsoft.com/en-us/rest/api/searchservice/suggestions">SUGGEST</a> method on the Azure Search REST API to retrieve suggestions for a search term.<br /><br />
+            Example: The suggestions provided in this tutorial are jobs from the NYCJobs sample. Give "exec" a try in the box below to see what the SUGGEST API returns.
+        </div>
+        <br />
+        <div class="searchBoxForm">
+            <input class="searchBox" type="text" id="example1a" placeholder="search">
+            <input type="submit" class="searchBoxSubmit">
+        </div>
+    </div>
+    <br />
 
     <script>
         $(function () {
@@ -15,16 +29,12 @@
         });
     </script>
 
+    <!-- Suggestions with Hit Highlighting -->
     <div class="example">
-        <h2 class="exampleTitle">Suggestions</h2>
-        <div class="exampleText">
-            Suggestions provide recommendations of actual results based on what the user has typed so far.  Typically, these are shown in a list below the search box and selecting an option navigates the user directly to what they are looking for instead of having to first go to a search results page and navigate from there.
-            You can use the <a href="https://docs.microsoft.com/en-us/rest/api/searchservice/suggestions">SUGGEST</a> method on the Azure Search REST API to retrieve suggestions for a search term.<br /><br />
-            Example: The suggestions provided in this tutorial are jobs from the NYCJobs sample. Give "exec" a try in the box below to see what the SUGGEST API returns.
-        </div>
+        <h2 class="exampleTitle">Suggestions with Hit Highlighting</h2>
         <br />
         <div class="searchBoxForm">
-            <input class="searchBox" type="text" id="example1a" placeholder="search">
+            <input class="searchBox" type="text" id="example1b" placeholder="search">
             <input type="submit" class="searchBoxSubmit">
         </div>
     </div>
@@ -49,29 +59,7 @@
         });
     </script>
 
-    <div class="example">
-        <h2 class="exampleTitle">Suggestions with Hit Highlighting</h2>
-        <br />
-        <div class="searchBoxForm">
-            <input class="searchBox" type="text" id="example1b" placeholder="search">
-            <input type="submit" class="searchBoxSubmit">
-        </div>
-    </div>
-    <br />
-
-    <script>
-        $(function () {
-            $("#example2").autocomplete({
-                source: "/home/autocomplete",
-                minLength: 3,
-                position: {
-                    my: "left top",
-                    at: "left-23 bottom+10"
-                }
-            });
-        });
-    </script>
-
+    <!-- Autocomplete -->
     <div class="example">
         <h2 class="exampleTitle">Autocomplete</h2>
         <div class="exampleText">
@@ -85,32 +73,95 @@
             <input type="submit" class="searchBoxSubmit">
         </div>
     </div>
-    <br />
 
     <script>
         $(function () {
-            $.widget("custom.catcomplete", $.ui.autocomplete, {
-                _create: function () {
-                    this._super();
-                    this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
-                },
-                _renderMenu: function (ul, items) {
-                    var that = this,
-                        currentCategory = "";
-                    $.each(items, function (index, item) {
-                        var li;
-                        if (item.category != currentCategory) {
-                            ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");
-                            currentCategory = item.category;
+            // using modified jQuery Autocomplete plugin v1.2.6 http://xdsoft.net/jqplugins/autocomplete/
+            // $.autocomplete -> $.autocompleteInline
+            $("#example2").autocompleteInline({
+                appendMethod: "replace",
+                source: [
+                    function (text, add) {
+                        if (!text) {
+                            return;
                         }
-                        li = that._renderItemData(ul, item);
-                    });
+
+                        $.getJSON("/home/autocomplete?term=" + text, function (data) {
+                            if (data && data.length > 0) {
+                                currentSuggestion2 = data[0];
+                                add(data);
+                            }
+                        });
+                    }
+                ]
+            });
+
+            // complete on TAB and clear on ESC
+            $("#example2").keydown(function (evt) {
+                if (evt.keyCode === 9 /* TAB */ && currentSuggestion2) {
+                    $("#example2").val(currentSuggestion2);
+                    return false;
+                } else if (evt.keyCode === 27 /* ESC */) {
+                    currentSuggestion2 = "";
+                    $("#example2").val("");
+                }
+            });
+        });
+    </script>
+    <br />
+
+    <!-- Both Suggestions and Autocomplete -->
+    <div class="example">
+        <h2 class="exampleTitle">Both Suggestions and Autocomplete</h2>
+        <div class="exampleText">
+            Autocomplete provides terms that are in the index and help the user complete what they are currently typing.  This helps to user write their search terms as they get recommendation for words and phrases that appear in the index.  This can also be used to provide recommendations for search terms that have been previously been used by other users.
+            You can use the <a href="TBD">AUTOCOMPLETE</a> method on the Azure Search REST API to retrieve words that complete a given search term.<br /><br />
+            Example: Give "const" a try in the box below to see what the AUTOCOMPLETE API returns.
+        </div>
+        <br />
+        <div class="searchBoxForm hide-autocomplete-dropdown">
+            <input class="searchBox" type="text" id="example3" placeholder="search">
+            <input type="submit" class="searchBoxSubmit">
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            // using modified jQuery Autocomplete plugin v1.2.6 http://xdsoft.net/jqplugins/autocomplete/
+            // $.autocomplete -> $.autocompleteInline
+            $("#example3").autocompleteInline({
+                appendMethod: "replace",
+                source: [
+                    function (text, add) {
+                        if (!text) {
+                            return;
+                        }
+
+                        $.getJSON("/home/autocomplete?term=" + text, function (data) {
+                            if (data && data.length > 0) {
+                                currentSuggestion3 = data[0];
+                                add(data);
+                            }
+                        });
+                    }
+                ]
+            });
+
+            // complete on TAB and clear on ESC
+            $("#example3").keydown(function (evt) {
+                if (evt.keyCode === 9 /* TAB */ && currentSuggestion3) {
+                    $("#example3").val(currentSuggestion3);
+                    return false;
+                } else if (evt.keyCode === 27 /* ESC */) {
+                    currentSuggestion3 = "";
+                    $("#example3").val("");
                 }
             });
 
-            $("#example3").catcomplete({
-                source: "/home/both",
-                minLength: 3,
+            $("#example3").autocomplete({
+                html: true,
+                source: "/home/suggest?highlights=false&fuzzy=false&",
+                minLength: 2,
                 position: {
                     my: "left top",
                     at: "left-23 bottom+10"
@@ -118,37 +169,9 @@
             });
         });
     </script>
-
-    <div class="example">
-        <h2 class="exampleTitle">Both Suggestions and Autocomplete</h2>
-        <div class="exampleText">
-            You can bring both Suggestions and Autocmplete together into into the same list to create a search experience similar to Xbox.com.
-            <br /><br />
-            Example: Give "const" a try in the box below to see what the AUTOCOMPLETE API returns.
-        </div>
-        <br />
-        <div class="searchBoxForm">
-            <input class="searchBox" type="text" id="example3" placeholder="search">
-            <input type="submit" class="searchBoxSubmit">
-        </div>
-    </div>
     <br />
 
-    <script>
-        $(function () {
-            $.getJSON("facets", function (data) {
-                $("#example4").autocomplete({
-                    minLength: 3,
-                    position: {
-                        my: "left top",
-                        at: "left-23 bottom+10"
-                    },
-                    source: data
-                });
-            });
-        });
-    </script>
-
+    <!-- Facets -->
     <div class="example">
         <h2 class="exampleTitle">Facets</h2>
         <div class="exampleText">
@@ -162,6 +185,22 @@
             <input type="submit" class="searchBoxSubmit">
         </div>
     </div>
+
+    <script>
+        $(function () {
+            $.getJSON("/home/facets", function (data) {
+                $("#example4").autocomplete({
+                    minLength: 3,
+                    position: {
+                        my: "left top",
+                        at: "left-23 bottom+10"
+                    },
+                    source: data
+                });
+            });
+        });
+    </script>
+
     <br /><br /><br /><br /><br /><br /><br /><br />
     <br /><br /><br /><br /><br /><br /><br /><br />
 </div>

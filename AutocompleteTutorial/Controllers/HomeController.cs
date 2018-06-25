@@ -46,15 +46,15 @@ namespace AutocompleteTutorial.Controllers
 
             return View();
         }
-        public ActionResult Suggest(bool highlights, string term)
+        public ActionResult Suggest(bool highlights, bool fuzzy, string term)
         {
             InitSearch();
 
             // Call suggest API and return results
             SuggestParameters sp = new SuggestParameters()
             {
-                UseFuzzyMatching = false,
-                Top = 5,
+                UseFuzzyMatching = fuzzy,
+                Top = 5
             };
 
             if (highlights)
@@ -66,7 +66,7 @@ namespace AutocompleteTutorial.Controllers
             DocumentSuggestResult resp = _indexClient.Documents.Suggest(term, "sg", sp);
 
             // Convert the suggest query results to a list that can be displayed in the client.
-            List<string> suggestions = resp.Results.Select(x => x.Text).Distinct().ToList();
+            List<string> suggestions = resp.Results.Select(x => x.Text).ToList();
             return new JsonResult
             {
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet,
@@ -80,7 +80,7 @@ namespace AutocompleteTutorial.Controllers
             //Call autocomplete API and return results
             AutocompleteParameters sp = new AutocompleteParameters()
             {
-                AutocompleteMode = AutocompleteMode.OneTerm,
+                AutocompleteMode = AutocompleteMode.OneTermWithContext,
                 UseFuzzyMatching = false,
                 Top = 5,
                 MinimumCoverage = 80
@@ -88,7 +88,7 @@ namespace AutocompleteTutorial.Controllers
             AutocompleteResult resp = _indexClient.Documents.Autocomplete(term, "sg", sp);
 
             // Conver the Suggest results to a list that can be displayed in the client.
-            List<string> autocomplete = resp.Results.Select(x => x.Text).Distinct().ToList();
+            List<string> autocomplete = resp.Results.Select(x => x.Text).ToList();
             return new JsonResult
             {
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet,
@@ -102,7 +102,7 @@ namespace AutocompleteTutorial.Controllers
 
             AutocompleteParameters sp1 = new AutocompleteParameters()
             {
-                AutocompleteMode = AutocompleteMode.OneTerm,
+                AutocompleteMode = AutocompleteMode.OneTermWithContext,
                 UseFuzzyMatching = false,
                 Top = 5,
                 MinimumCoverage = 80
@@ -118,8 +118,8 @@ namespace AutocompleteTutorial.Controllers
             DocumentSuggestResult resp2 = _indexClient.Documents.Suggest(term, "sg", sp2);
        
             //Convert the suggest query results to a list that can be displayed in the client.
-            var result = resp1.Results.Select(x => x.Text).Distinct().ToList().Select(x => new { label = x, category = "Suggestions" }).ToList();
-            result.AddRange(resp2.Results.Select(x => x.Text).Distinct().ToList().Select(x => new { label = x, category = "Autocomplete" }).ToList());
+            var result = resp1.Results.Select(x => new { label = x.Text, category = "Autocomplete" }).ToList();
+            result.AddRange(resp2.Results.Select(x => new { label = x.Text, category = "Suggestions" }).ToList());
 
             return new JsonResult
             {

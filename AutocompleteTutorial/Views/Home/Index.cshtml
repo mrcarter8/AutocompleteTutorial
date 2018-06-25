@@ -5,9 +5,8 @@
     <script>
         $(function () {
             $("#example1a").autocomplete({
-                html: true,
-                source: "/home/suggest?highlights=false&",
-                minLength: 2,
+                source: "/home/suggest?highlights=false&fuzzy=false&",
+                minLength: 3,
                 position: {
                     my: "left top",
                     at: "left-23 bottom+10"
@@ -21,7 +20,7 @@
         <div class="exampleText">
             Suggestions provide recommendations of actual results based on what the user has typed so far.  Typically, these are shown in a list below the search box and selecting an option navigates the user directly to what they are looking for instead of having to first go to a search results page and navigate from there.
             You can use the <a href="https://docs.microsoft.com/en-us/rest/api/searchservice/suggestions">SUGGEST</a> method on the Azure Search REST API to retrieve suggestions for a search term.<br /><br />
-            Example: The suggestions provided in this tutorial are jobs from the NYCJobs sample. Give "exe" a try in the box below to see what the SUGGEST API returns.
+            Example: The suggestions provided in this tutorial are jobs from the NYCJobs sample. Give "exec" a try in the box below to see what the SUGGEST API returns.
         </div>
         <br />
         <div class="searchBoxForm">
@@ -35,8 +34,8 @@
         $(function () {
             $("#example1b").autocomplete({
                 html: true,
-                source: "/home/suggest?highlights=true&",
-                minLength: 2,
+                source: "/home/suggest?highlights=true&fuzzy=false&",
+                minLength: 3,
                 position: {
                     my: "left top",
                     at: "left-23 bottom+10"
@@ -64,7 +63,7 @@
         $(function () {
             $("#example2").autocomplete({
                 source: "/home/autocomplete",
-                minLength: 2,
+                minLength: 3,
                 position: {
                     my: "left top",
                     at: "left-23 bottom+10"
@@ -78,7 +77,7 @@
         <div class="exampleText">
             Autocomplete provides terms that are in the index and help the user complete what they are currently typing.  This helps to user write their search terms as they get recommendation for words and phrases that appear in the index.  This can also be used to provide recommendations for search terms that have been previously been used by other users.
             You can use the <a href="TBD">AUTOCOMPLETE</a> method on the Azure Search REST API to retrieve words that complete a given search term.<br /><br />
-            Example: Give "***" a try in the box below to see what the AUTOCOMPLETE API returns.
+            Example: Give "business a" a try in the box below to see what the AUTOCOMPLETE API returns.
         </div>
         <br />
         <div class="searchBoxForm">
@@ -105,16 +104,13 @@
                             currentCategory = item.category;
                         }
                         li = that._renderItemData(ul, item);
-                        if (item.category) {
-                            li.attr("aria-label", item.category + " : " + item.label);
-                        }
                     });
                 }
             });
 
             $("#example3").catcomplete({
                 source: "/home/both",
-                minLength: 2,
+                minLength: 3,
                 position: {
                     my: "left top",
                     at: "left-23 bottom+10"
@@ -128,7 +124,7 @@
         <div class="exampleText">
             You can bring both Suggestions and Autocmplete together into into the same list to create a search experience similar to Xbox.com.
             <br /><br />
-            Example: Give "***" a try in the box below to see what the AUTOCOMPLETE API returns.
+            Example: Give "const" a try in the box below to see what the AUTOCOMPLETE API returns.
         </div>
         <br />
         <div class="searchBoxForm">
@@ -142,7 +138,7 @@
         $(function () {
             $.getJSON("facets", function (data) {
                 $("#example4").autocomplete({
-                    minLength: 2,
+                    minLength: 3,
                     position: {
                         my: "left top",
                         at: "left-23 bottom+10"
@@ -156,9 +152,9 @@
     <div class="example">
         <h2 class="exampleTitle">Facets</h2>
         <div class="exampleText">
-            Both suggestions and autocomplete require a roundtrips to the Azure Search index to retrieve recommendations.  This can introduce a slight delay depending on the network speed of the user.  Another technique to consider is using a facet to retrieve all unique values for a field and cache them on the client when the application page loads.  This is helpful in situations where you are building a search box targeting values in a single field.
+            Both suggestions and autocomplete require a roundtrips to the Azure Search index to retrieve recommendations.  This can introduce a delay depending on the network speed of the user.  Another technique to consider is using a facet to retrieve all unique values for a field and cache them on the client when the application page loads.  This is helpful in situations where you are building a search box targeting values in a single field.
             <br /><br />
-            Example: Give "***" a try in the box below to see what the AUTOCOMPLETE API returns.
+            Example: Give "dept" a try in the box below to see what the AUTOCOMPLETE API returns.
         </div>
         <br />
         <div class="searchBoxForm">

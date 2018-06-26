@@ -75,7 +75,7 @@
 }
 
 .xdsoft_autocomplete_dropdown {
-    margin-left: -20px !important;
+    margin-left: -18px !important;
     margin-top: 5px !important;
     width: 648px !important;
 }
@@ -87,7 +87,6 @@
 .xdsoft_autocomplete input {
     margin: 3px 5px !important;
 }
-
 
 .xdsoft_autocomplete .xdsoft_autocomplete_hint {
     position: absolute;

@@ -33,6 +33,11 @@ namespace AutocompleteTutorial.Controllers
             return View();
         }
 
+        public ActionResult IndexJavaScript()
+        {
+            return View();
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

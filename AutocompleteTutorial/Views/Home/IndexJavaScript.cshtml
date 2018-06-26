@@ -18,8 +18,35 @@
 
     <script>
         $(function () {
+            var searchServiceName = "azs-playground";
+            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
+            var indexName = "nycjobs";
+
+            var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=2017-11-11-Preview";
+
             $("#example1a").autocomplete({
-                source: "/home/suggest?highlights=false&fuzzy=false&",
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: suggestUri,
+                        dataType: "json",
+                        headers: {
+                            "api-key": searchServiceApiKey,
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify({
+                            top: 5,
+                            fuzzy: false,
+                            suggesterName: "sg",
+                            search: request.term
+                        }),
+                        success: function (data) {
+                            if (data.value && data.value.length > 0) {
+                                response(data.value.map(x => x["@@search.text"]));
+                            }                            
+                        }
+                    });
+                },
                 minLength: 3,
                 position: {
                     my: "left top",
@@ -42,6 +69,12 @@
 
     <script>
         $(function () {
+            var searchServiceName = "azs-playground";
+            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
+            var indexName = "nycjobs";
+
+            var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=2017-11-11-Preview";
+
             var updateTextbox = function (event, ui) {
                 var result = ui.item.value.replace(/<\/?[^>]+(>|$)/g, "");
                 $("#example1b").val(result);
@@ -50,7 +83,30 @@
 
             $("#example1b").autocomplete({
                 html: true,
-                source: "/home/suggest?highlights=true&fuzzy=false&",
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: suggestUri,
+                        dataType: "json",
+                        headers: {
+                            "api-key": searchServiceApiKey,
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify({
+                            top: 5,
+                            fuzzy: false,
+                            suggesterName: "sg",
+                            search: request.term,
+                            highlightPreTag: "<b>",
+                            highlightPostTag: "</b>"
+                        }),
+                        success: function (data) {
+                            if (data.value && data.value.length > 0) {
+                                response(data.value.map(x => x["@@search.text"]));
+                            }
+                        }
+                    });
+                },
                 minLength: 3,
                 position: {
                     my: "left top",
@@ -84,6 +140,12 @@
 
     <script>
         $(function () {
+            var searchServiceName = "azs-playground";
+            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
+            var indexName = "nycjobs";
+
+            var autocompleteUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/autocomplete?api-version=2017-11-11-Preview";
+
             // using modified jQuery Autocomplete plugin v1.2.6 http://xdsoft.net/jqplugins/autocomplete/
             // $.autocomplete -> $.autocompleteInline
             $("#example2").autocompleteInline({
@@ -94,10 +156,27 @@
                             return;
                         }
 
-                        $.getJSON("/home/autocomplete?term=" + text, function (data) {
-                            if (data && data.length > 0) {
-                                currentSuggestion2 = data[0];
-                                add(data);
+                        $.ajax({
+                            type: "POST",
+                            url: autocompleteUri,
+                            dataType: "json",
+                            headers: {
+                                "api-key": searchServiceApiKey,
+                                "Content-Type": "application/json"
+                            },
+                            data: JSON.stringify({
+                                top: 5,
+                                fuzzy: false,
+                                suggesterName: "sg",
+                                search: text,
+                                autocompleteMode: "oneTermWithContext"
+                            }),
+                            success: function (data) {
+                                if (data.value && data.value.length > 0) {
+                                    var suggestions = data.value.map(x => x.text);
+                                    currentSuggestion2 = suggestions[0];
+                                    add(suggestions);
+                                }
                             }
                         });
                     }
@@ -135,6 +214,13 @@
 
     <script>
         $(function () {
+            var searchServiceName = "azs-playground";
+            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
+            var indexName = "nycjobs";
+
+            var autocompleteUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/autocomplete?api-version=2017-11-11-Preview";
+            var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=2017-11-11-Preview";
+
             // using modified jQuery Autocomplete plugin v1.2.6 http://xdsoft.net/jqplugins/autocomplete/
             // $.autocomplete -> $.autocompleteInline
             $("#example3").autocompleteInline({
@@ -145,10 +231,27 @@
                             return;
                         }
 
-                        $.getJSON("/home/autocomplete?term=" + text, function (data) {
-                            if (data && data.length > 0) {
-                                currentSuggestion3 = data[0];
-                                add(data);
+                        $.ajax({
+                            type: "POST",
+                            url: autocompleteUri,
+                            dataType: "json",
+                            headers: {
+                                "api-key": searchServiceApiKey,
+                                "Content-Type": "application/json"
+                            },
+                            data: JSON.stringify({
+                                top: 5,
+                                fuzzy: false,
+                                suggesterName: "sg",
+                                search: text,
+                                autocompleteMode: "oneTermWithContext"
+                            }),
+                            success: function (data) {
+                                if (data.value && data.value.length > 0) {
+                                    var suggestions = data.value.map(x => x.text);
+                                    currentSuggestion3 = suggestions[0];
+                                    add(suggestions);
+                                }
                             }
                         });
                     }
@@ -168,7 +271,28 @@
 
             $("#example3").autocomplete({
                 html: true,
-                source: "/home/suggest?highlights=false&fuzzy=false&",
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: suggestUri,
+                        dataType: "json",
+                        headers: {
+                            "api-key": searchServiceApiKey,
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify({
+                            top: 5,
+                            fuzzy: false,
+                            suggesterName: "sg",
+                            search: request.term
+                        }),
+                        success: function (data) {
+                            if (data.value && data.value.length > 0) {
+                                response(data.value.map(x => x["@@search.text"]));
+                            }
+                        }
+                    });
+                },
                 minLength: 2,
                 position: {
                     my: "left top",
@@ -196,15 +320,36 @@
 
     <script>
         $(function () {
-            $.getJSON("/home/facets", function (data) {
-                $("#example4").autocomplete({
-                    minLength: 3,
-                    position: {
-                        my: "left top",
-                        at: "left-23 bottom+10"
-                    },
-                    source: data
-                });
+            var searchServiceName = "azs-playground";
+            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
+            var indexName = "nycjobs";
+
+            var searchUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/search?api-version=2017-11-11-Preview"
+            $.ajax({
+                type: "POST",
+                url: searchUri,
+                dataType: "json",
+                headers: {
+                    "api-key": searchServiceApiKey,
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify({
+                    top: 10,
+                    facets: ["agency,count:500"],
+                    search: "*"
+                }),
+                success: function (data) {
+                    if (data.value && data.value.length > 0) {
+                        $("#example4").autocomplete({
+                            minLength: 3,
+                            position: {
+                                my: "left top",
+                                at: "left-23 bottom+10"
+                            },
+                            source: data["@@search.facets"].agency.map(x => x.value)
+                        });                        
+                    }
+                }
             });
         });
     </script>

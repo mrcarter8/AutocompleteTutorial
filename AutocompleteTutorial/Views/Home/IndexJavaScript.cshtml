@@ -1,4 +1,20 @@
-﻿<div class="tutorialBody">
+﻿@using System.Configuration;
+
+<script>
+    var searchServiceName = "@ConfigurationManager.AppSettings["SearchServiceName"]";
+    var searchServiceApiKey = "@ConfigurationManager.AppSettings["SearchServiceApiKey"]";
+    var indexName = "nycjobs";
+    var apiVersion = "2017-11-11-Preview";
+
+    var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=" + apiVersion;
+    var autocompleteUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/autocomplete?api-version=" + apiVersion;
+</script>
+
+<div class="tutorialBody">
+
+    <div class="example">
+        <h2 class="exampleTitle">JavaScript using the REST API</h2>
+    </div>
 
     <!-- Suggestions -->
     <div class="example">
@@ -18,12 +34,6 @@
 
     <script>
         $(function () {
-            var searchServiceName = "azs-playground";
-            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
-            var indexName = "nycjobs";
-
-            var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=2017-11-11-Preview";
-
             $("#example1a").autocomplete({
                 source: function (request, response) {
                     $.ajax({
@@ -43,7 +53,7 @@
                         success: function (data) {
                             if (data.value && data.value.length > 0) {
                                 response(data.value.map(x => x["@@search.text"]));
-                            }                            
+                            }
                         }
                     });
                 },
@@ -69,12 +79,6 @@
 
     <script>
         $(function () {
-            var searchServiceName = "azs-playground";
-            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
-            var indexName = "nycjobs";
-
-            var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=2017-11-11-Preview";
-
             var updateTextbox = function (event, ui) {
                 var result = ui.item.value.replace(/<\/?[^>]+(>|$)/g, "");
                 $("#example1b").val(result);
@@ -140,12 +144,6 @@
 
     <script>
         $(function () {
-            var searchServiceName = "azs-playground";
-            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
-            var indexName = "nycjobs";
-
-            var autocompleteUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/autocomplete?api-version=2017-11-11-Preview";
-
             // using modified jQuery Autocomplete plugin v1.2.6 http://xdsoft.net/jqplugins/autocomplete/
             // $.autocomplete -> $.autocompleteInline
             $("#example2").autocompleteInline({
@@ -214,13 +212,6 @@
 
     <script>
         $(function () {
-            var searchServiceName = "azs-playground";
-            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
-            var indexName = "nycjobs";
-
-            var autocompleteUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/autocomplete?api-version=2017-11-11-Preview";
-            var suggestUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/suggest?api-version=2017-11-11-Preview";
-
             // using modified jQuery Autocomplete plugin v1.2.6 http://xdsoft.net/jqplugins/autocomplete/
             // $.autocomplete -> $.autocompleteInline
             $("#example3").autocompleteInline({
@@ -320,11 +311,6 @@
 
     <script>
         $(function () {
-            var searchServiceName = "azs-playground";
-            var searchServiceApiKey = "19DCAA183875A7D5E4DFF47D3CDB498B";
-            var indexName = "nycjobs";
-
-            var searchUri = "https://" + searchServiceName + ".search.windows.net/indexes/" + indexName + "/docs/search?api-version=2017-11-11-Preview"
             $.ajax({
                 type: "POST",
                 url: searchUri,
@@ -347,7 +333,7 @@
                                 at: "left-23 bottom+10"
                             },
                             source: data["@@search.facets"].agency.map(x => x.value)
-                        });                        
+                        });
                     }
                 }
             });
